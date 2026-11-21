@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eren Alp Ertem — AP Research Portfolio</title>
+
+  <!-- Inter Font (clean editorial sans) + JetBrains Mono for lab figures/labels -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Initialize theme before first paint to prevent light/dark flicker -->
+  <script>
+    (function () {
+      try {
+        const saved = localStorage.getItem('eren-portfolio-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {
+        // Ignore storage errors in restricted environments
+      }
+    })();
+  </script>
+</head>
+
+<body class="bg-stone-50 text-stone-900 dark:bg-zinc-950 dark:text-zinc-100 font-sans antialiased transition-colors duration-200 min-h-screen flex flex-col selection:bg-stone-900 selection:text-stone-50 dark:selection:bg-zinc-100 dark:selection:text-zinc-950">
+
+  <!-- ==================== HEADER / NAVIGATION ==================== -->
+  <header class="sticky top-0 z-50 bg-stone-50/90 dark:bg-zinc-950/90 backdrop-blur-sm border-b border-stone-200 dark:border-zinc-800">
+    <div class="max-w-5xl mx-auto px-5 sm:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Simple Typographic Identity -->
+        <button
+          type="button"
+          onclick="switchTab('home')"
+          class="text-left rounded-md py-1 focus:outline-none focus:ring-2 focus:ring-stone-400 dark:focus:ring-zinc-600"
+        >
+          <span class="text-sm sm:text-base font-semibold tracking-tight text-stone-900 dark:text-zinc-100">
+            Eren Alp Ertem
+          </span>
+          <span class="hidden sm:inline text-stone-400 dark:text-zinc-600 mx-2">/</span>
+          <span class="hidden sm:inline text-xs font-mono text-stone-500 dark:text-zinc-400">
+            AP Research 2026–27
+          </span>
+        </button>
+
+        <!-- Right-Aligned Navigation & Theme Switch -->
+        <div class="flex items-center gap-1 sm:gap-2">
+          <!-- Desktop Tabs -->
+          <nav class="hidden md:flex items-center gap-1 mr-3" aria-label="Primary Navigation">
+            <button
+              type="button"
+              data-tab="home"
+              onclick="switchTab('home')"
+              class="nav-tab px-3.5 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Home
+            </button>
+            <button
+              type="button"
+              data-tab="personal"
+              onclick="switchTab('personal')"
+              class="nav-tab px-3.5 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              About Me
+            </button>
+            <button
+              type="button"
+              data-tab="process"
+              onclick="switchTab('process')"
+              class="nav-tab px-3.5 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Process
+            </button>
+          </nav>
+
+          <!-- Clean Light / Dark Toggle -->
+          <button
+            type="button"
+            onclick="toggleTheme()"
+            class="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-stone-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-stone-100 dark:hover:bg-zinc-800 text-xs font-mono text-stone-700 dark:text-zinc-300 transition-colors"
+            aria-label="Toggle Light and Dark Mode"
+          >
+            <svg class="w-3.5 h-3.5 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"></path>
+            </svg>
+            <svg class="w-3.5 h-3.5 block dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+            </svg>
+            <span class="hidden dark:inline">Light</span>
+            <span class="inline dark:hidden">Dark</span>
+          </button>
+
+          <!-- Mobile Menu Button -->
+          <button
+            type="button"
+            id="mobile-menu-btn"
+            onclick="toggleMobileMenu()"
+            class="md:hidden p-2.5 rounded-md border border-stone-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-stone-700 dark:text-zinc-200"
+            aria-label="Toggle Menu"
+            aria-expanded="false"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Panel -->
+      <div id="mobile-menu" class="hidden md:hidden py-3 border-t border-stone-200 dark:border-zinc-800">
+        <div class="flex flex-col gap-1">
+          <button type="button" data-tab="home" onclick="switchTab('home'); toggleMobileMenu(false);" class="nav-tab-mobile w-full text-left px-3 py-2.5 rounded-md text-sm font-medium">
+            Home
+          </button>
+          <button type="button" data-tab="personal" onclick="switchTab('personal'); toggleMobileMenu(false);" class="nav-tab-mobile w-full text-left px-3 py-2.5 rounded-md text-sm font-medium">
+            About Me
+          </button>
+          <button type="button" data-tab="process" onclick="switchTab('process'); toggleMobileMenu(false);" class="nav-tab-mobile w-full text-left px-3 py-2.5 rounded-md text-sm font-medium">
+            Process
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="flex-grow max-w-5xl w-full mx-auto px-5 sm:px-8 py-10 sm:py-16">
+
+    <!-- ====================================================== -->
+    <!-- TAB 1: HOME (Landing Page with Title & Technical Plot) -->
+    <!-- ====================================================== -->
+    <section id="tab-home" class="tab-panel space-y-14">
+
+      <!-- Editorial Hero -->
+      <div class="space-y-8">
+        <div class="space-y-5 max-w-3xl">
+          <p class="font-mono text-xs uppercase tracking-widest text-stone-500 dark:text-zinc-400">
+            Innovation Academy &middot; Microbiology &amp; Applied Acoustics
+          </p>
+
+          <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-stone-950 dark:text-white leading-[1.12]">
+            Effects of Controlled Acoustic Vibration on the Growth Kinetics of
+            <span class="italic font-semibold">Saccharomyces cerevisiae</span>
+          </h1>
+
+          <p class="text-base sm:text-lg text-stone-600 dark:text-zinc-400 leading-relaxed">
+            An experimental AP Research study examining whether targeted mechanical vibrations—delivered directly to liquid yeast cultures—produce consistent, measurable changes in cellular growth rate.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button
+              type="button"
+              onclick="switchTab('process')"
+              class="px-5 py-2.5 rounded-md bg-stone-900 hover:bg-stone-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-stone-50 dark:text-zinc-950 text-sm font-medium transition-colors"
+            >
+              Read the Research Process &rarr;
+            </button>
+            <button
+              type="button"
+              onclick="switchTab('personal')"
+              class="px-5 py-2.5 rounded-md border border-stone-300 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-900 text-stone-800 dark:text-zinc-200 text-sm font-medium transition-colors"
+            >
+              About Me
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Research Question Block -->
+      <div class="border-t border-stone-200 dark:border-zinc-800 pt-10">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div class="md:col-span-4">
+            <h2 class="font-mono text-xs uppercase tracking-widest text-stone-500 dark:text-zinc-400">
+              Research Question
+            </h2>
+          </div>
+          <div class="md:col-span-8">
+            <blockquote class="text-xl sm:text-2xl font-semibold text-stone-900 dark:text-zinc-100 leading-snug">
+              “To what extent does controlled acoustic vibration at different frequencies, amplitudes, and intervals affect the growth rate of liquid cultures of <em class="font-medium">S. cerevisiae</em>?”
+            </blockquote>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Project Summary (3-Column Editorial Spec Row) -->
+      <div class="border-t border-stone-200 dark:border-zinc-800 pt-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="space-y-2">
+            <p class="font-mono text-xs text-stone-500 dark:text-zinc-400">01 / INDUSTRY SCALE</p>
+            <h3 class="text-base font-semibold text-stone-900 dark:text-zinc-100">
+              $255.2B Fermented Foods &amp; Biofuels
+            </h3>
+            <p class="text-sm text-stone-600 dark:text-zinc-400 leading-relaxed">
+              <em>S. cerevisiae</em> underpins both the global fermented foods market (IMARC Group, n.d.) and bioethanol production. Non-chemical methods to optimize yeast growth could improve yield and reduce fossil fuel reliance.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <p class="font-mono text-xs text-stone-500 dark:text-zinc-400">02 / THE GAP</p>
+            <h3 class="text-base font-semibold text-stone-900 dark:text-zinc-100">
+              Conflicting Prior Results
+            </h3>
+            <p class="text-sm text-stone-600 dark:text-zinc-400 leading-relaxed">
+              Existing papers report contradictory outcomes—growth acceleration, inhibition, or no effect—largely because airborne speaker setups vary in distance, acoustics, and vessel vibration.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <p class="font-mono text-xs text-stone-500 dark:text-zinc-400">03 / APPROACH</p>
+            <h3 class="text-base font-semibold text-stone-900 dark:text-zinc-100">
+              Standardized Direct Coupling
+            </h3>
+            <p class="text-sm text-stone-600 dark:text-zinc-400 leading-relaxed">
+              Using a dual-channel signal generator and contact transducers mounted directly to stationary flasks, this study isolates vibration variables and tracks growth via spectrophotometer OD600 readings.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================== -->
+    <!-- TAB 2: PERSONAL / ABOUT ME (Includes Guitar Stuff)     -->
+    <!-- ====================================================== -->
+    <section id="tab-personal" class="tab-panel hidden space-y-12">
+
+      <div class="border-b border-stone-200 dark:border-zinc-800 pb-6">
+        <p class="font-mono text-xs uppercase tracking-widest text-stone-500 dark:text-zinc-400 mb-2">
+          Personal
+        </p>
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-stone-950 dark:text-white">
+          About Me
+        </h2>
+      </div>
+
+      <!-- Bio + Headshot -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 items-start">
+        <!-- Photo Column (Upload headshot.jpg to GitHub repo) -->
+        <div class="md:col-span-4 space-y-3">
+          <div class="rounded-lg overflow-hidden border border-stone-200 dark:border-zinc-800 bg-stone-100 dark:bg-zinc-900">
+            <img
+              src="headshot.jpg"
+              alt="Eren Alp Ertem"
+              onerror="this.onerror=null; this.src='https://placehold.co/600x700/27272a/e4e4e7?text=Eren+Alp+Ertem%0A(Upload+headshot.jpg)';"
+              class="w-full h-auto object-cover aspect-[4/5]"
+            />
+          </div>
+          <div class="text-xs font-mono text-stone-500 dark:text-zinc-400 space-y-0.5">
+            <p class="text-stone-900 dark:text-zinc-200 font-medium">Eren Alp Ertem</p>
+            <p>Innovation Academy &middot; Alpharetta, GA</p>
+          </div>
+        </div>
+
+        <!-- Bio & Contact Column -->
+        <div class="md:col-span-8 space-y-5">
+          <p class="text-base text-stone-700 dark:text-zinc-300 leading-relaxed">
+            I’m a high school student at Innovation Academy focused on engineering and biotechnology. My AP Research project grew out of wanting to combine hands-on hardware with wet-lab microbiology—specifically testing how controlled mechanical sound waves affect living systems like <em>Saccharomyces cerevisiae</em>.
+          </p>
+
+          <p class="text-base text-stone-700 dark:text-zinc-300 leading-relaxed">
+            A lot of what pushed me toward acoustic instrumentation actually comes from playing electric guitar. Messing with guitar amplifiers, pickups, speaker cabinets, and signal chains made me comfortable working with frequencies, impedance, and audio hardware—so wiring up a dual-channel signal generator, stereo amp, and surface transducers for a microbiology lab felt like a natural crossover.
+          </p>
+
+          <p class="text-base text-stone-700 dark:text-zinc-300 leading-relaxed">
+            Outside of the lab and music, I build competition robots on FRC Team 8866 and work weekends as a certified U.S. Soccer referee. Between debugging hardware at robotics competitions and managing live games on the field, I’ve learned to stay calm when things break and rely on clear data and rules to make decisions.
+          </p>
+
+          <!-- Direct Contact Row (Email only, per preferences) -->
+          <div class="pt-4 border-t border-stone-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-3">
+            <div class="space-y-0.5">
+              <p class="font-mono text-[11px] uppercase tracking-wider text-stone-500 dark:text-zinc-500">Contact</p>
+              <a
+                href="mailto:erenalpertem@aol.com"
+                class="text-sm font-medium text-stone-900 dark:text-zinc-100 underline decoration-stone-400 dark:decoration-zinc-600 underline-offset-4 hover:decoration-stone-900 dark:hover:decoration-zinc-200"
+              >
+                erenalpertem@aol.com
+              </a>
+            </div>
+            <button
+              type="button"
+              onclick="copyEmail()"
+              class="px-3.5 py-2 rounded-md border border-stone-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-stone-100 dark:hover:bg-zinc-800 text-xs font-mono text-stone-700 dark:text-zinc-300 transition-colors"
+            >
+              Copy email
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Structured 2x2 Grid: FRC, Biotech, Electric Guitar, Soccer Refereeing -->
+      <div class="border-t border-stone-200 dark:border-zinc-800 pt-10 space-y-6">
+        <h3 class="font-mono text-xs uppercase tracking-widest text-stone-500 dark:text-zinc-400">
+          Background &amp; Activities
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- FRC Robotics -->
+          <div class="rounded-lg border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-6 space-y-2">
+            <div class="flex items-baseline justify-between gap-2">
+              <h4 class="text-base font-semibold text-stone-900 dark:text-zinc-100">
+                FRC Robotics — Team 8866
+              </h4>
+              <span class="font-mono text-[11px] text-stone-500 dark:text-zinc-500">Engineering</span>
+            </div>
+            <p class="text-sm text-stone-600 dark:text-zinc-400 leading-relaxed">
+              Design, CAD modeling, mechanical assembly, wiring, and rapid prototyping for FIRST Robotics Competition. These skills carry directly into designing mounts, isolating vibration, and calibrating my experimental rig.
+            </p>
+          </div>
+
+          <!-- Biotechnology & Microbiology -->
+          <div class="rounded-lg border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-6 space-y-2">
+            <div class="flex items-baseline justify-between gap-2">
+              <h4 class="text-base font-semibold text-stone-900 dark:text-zinc-100">
+                Biotechnology &amp; Lab Sciences
+              </h4>
+              <span class="font-mono text-[11px] text-stone-500 dark:text-zinc-500">BSL-1 Lab</span>
+            </div>
+            <p class="text-sm text-stone-600 dark:text-zinc-400 leading-relaxed">
+              Hands-on training in aseptic technique, liquid culturing, optical density spectrophotometry (OD600), and biosafety disposal protocols at Innovation Academy.
+            </p>
+          </div>
+
+          <!-- Electric Guitar & Audio -->
+          <div class="rounded-lg border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-6 space-y-2">
+            <div class="flex items-baseline justify-between gap-2">
+              <h4 class="text-base font-semibold text-stone-900 dark:text-zinc-100">
+                Electric Guitar &amp; Audio Gear
+              </h4>
+              <span class="font-mono text-[11px] text-stone-500 dark:text-zinc-500">Music &amp; Signal</span>
+            </div>
+            <p class="text-sm text-stone-600 dark:text-zinc-400 leading-relaxed">
+              Playing electric guitar sparked my interest in acoustics, amplification, frequency response, and speaker physics—directly inspiring how I approached driving surface transducers with a dual-channel signal generator.
+            </p>
+          </div>
+
+          <!-- Soccer Refereeing -->
+          <div class="rounded-lg border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-6 space-y-2">
+            <div class="flex items-baseline justify-between gap-2">
+              <h4 class="text-base font-semibold text-stone-900 dark:text-zinc-100">
+                U.S. Soccer Certified Referee
+              </h4>
+              <span class="font-mono text-[11px] text-stone-500 dark:text-zinc-500">Officiating</span>
+            </div>
+            <p class="text-sm text-stone-600 dark:text-zinc-400 leading-relaxed">
+              Officiating competitive youth soccer matches on weekends. Requires consistent rule application, split-second judgment under pressure, and clear communication with players and coaches.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================== -->
+    <!-- TAB 3: PROCESS (Gap, Lit Review, Methodology, Timeline)-->
+    <!-- ====================================================== -->
+    <section id="tab-process" class="tab-panel hidden space-y-14">
+
+      <div class="border-b border-stone-200 dark:border-zinc-800 pb-6">
+        <p class="font-mono text-xs uppercase tracking-widest text-stone-500 dark:text-zinc-400 mb-2">
+          Process
+        </p>
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-stone-950 dark:text-white">
+          Research Development &amp; Experimental Plan
+        </h2>
+        <p class="text-sm sm:text-base text-stone-600 dark:text-zinc-400 mt-2 max-w-2xl">
+          Documentation of topic ideation, background literature synthesis, preliminary dual-channel experimental design, and Semester 1 milestones.
+        </p>
+      </div>
+
+      <!-- 01. Ideation, Gap & Hypothesis -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-4 space-y-1">
+          <p class="font-mono text-xs text-stone-500 dark:text-zinc-500">01</p>
+          <h3 class="text-lg font-semibold text-stone-900 dark:text-zinc-100">
+            Ideation &amp; Research Gap
+          </h3>
+        </div>
+        <div class="md:col-span-8 space-y-4">
+          <p class="text-sm sm:text-base text-stone-700 dark:text-zinc-300 leading-relaxed">
+            <em>Saccharomyces cerevisiae</em> is foundational to both fermented food manufacturing (a $255.2B global market in 2025) and industrial bioethanol production. While chemical additives and genetic modification are heavily studied, physical methods like audible acoustic stimulation remain under-researched and poorly standardized.
+          </p>
+          <p class="text-sm sm:text-base text-stone-700 dark:text-zinc-300 leading-relaxed">
+            Existing studies show conflicting outcomes on whether sound accelerates or inhibits yeast growth, likely due to major differences in speakers, enclosures, and accidental vessel vibration. Isolating controlled vibration parameters addresses this gap directly.
+          </p>
+          <div class="rounded-lg border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-4">
+            <p class="font-mono text-[11px] uppercase tracking-wider text-stone-500 dark:text-zinc-400 mb-1">
+              Working Hypothesis
+            </p>
+            <p class="text-sm text-stone-800 dark:text-zinc-200 leading-relaxed">
+              If liquid cultures of <em>S. cerevisiae</em> are exposed to specific, controlled acoustic vibration frequencies via direct surface coupling, their growth rate (measured by OD600) will diverge significantly from that of unexposed ambient controls.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02. Background Literature Synthesis -->
+      <div class="border-t border-stone-200 dark:border-zinc-800 pt-10 grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-4 space-y-1">
+          <p class="font-mono text-xs text-stone-500 dark:text-zinc-500">02</p>
+          <h3 class="text-lg font-semibold text-stone-900 dark:text-zinc-100">
+            Literature Review Synthesis
+          </h3>
+        </div>
+        <div class="md:col-span-8 space-y-6">
+          <div class="space-y-2">
+            <h4 class="text-sm font-semibold text-stone-900 dark:text-zinc-100">
+              Empirical Findings &amp; Contradictions
+            </h4>
+            <p class="text-sm sm:text-base text-stone-700 dark:text-zinc-300 leading-relaxed">
+              Aggio et al. (2012) and Harris et al. (2020) observed that targeted sound exposure altered <em>S. cerevisiae</em> volatile metabolites and increased growth rates in liquid culture. However, Adadi et al. (2021) noted inconsistent final biomass across intensities, and Benitez et al. (2022) found little consistent impact inside a controlled anechoic chamber. Tokuda et al. (2024) suggested that mechanical vibration transferred into the vessel—rather than airborne sound pressure alone—may explain why earlier setups produced different outcomes.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-sm font-semibold text-stone-900 dark:text-zinc-100">
+              Mechanisms, Controls &amp; Applications
+            </h4>
+            <p class="text-sm sm:text-base text-stone-700 dark:text-zinc-300 leading-relaxed">
+              Annells et al. (2026) point to mechanosensitive ion channels and calcium signaling as likely pathways for fungal sound perception, consistent with growth stimulation observed in other fungi (Robinson et al., 2024). Methodologically, Granata et al. (2021) demonstrated how fluid agitation alters oxygenation in yeast cultures, underscoring the need to control mixing and heat carefully. Standardizing acoustic stimulation has practical value across fermented beverages (Walker &amp; Stewart, 2016) and lignocellulosic bioethanol production (Zhang et al., 2020).
+            </p>
+          </div>
+
+          <!-- Collapsible APA Bibliography -->
+          <details class="rounded-lg border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4">
+            <summary class="cursor-pointer font-mono text-xs uppercase tracking-wider text-stone-700 dark:text-zinc-300 select-none">
+              Selected References (APA — Click to Expand)
+            </summary>
+            <ul class="mt-4 pt-3 border-t border-stone-200 dark:border-zinc-800 space-y-2 text-xs text-stone-600 dark:text-zinc-400 leading-relaxed">
+              <li class="pl-5 -indent-5">Adadi, P., Kanwugu, O. N., &amp; Kourimska, L. (2021). The effect of sound frequency and intensity on yeast growth, fermentation performance and volatile composition of beer. <em>Scientific Reports</em>, 11(1), Article 17564.</li>
+              <li class="pl-5 -indent-5">Aggio, R., Obolonkin, V., &amp; Villas-Bôas, S. G. (2012). Sonic vibration affects the metabolism of yeast cells growing in liquid culture: A metabolomic study. <em>Metabolomics</em>, 8(4), 670–678.</li>
+              <li class="pl-5 -indent-5">Annells, et al. (2026). Acoustic modulation of fungal friends and foes. <em>Trends in Biotechnology</em>.</li>
+              <li class="pl-5 -indent-5">Benitez, et al. (2022). Direct liquid transmission of sound has little impact on fermentation performance in <em>Saccharomyces cerevisiae</em>. <em>PLOS One</em>.</li>
+              <li class="pl-5 -indent-5">Granata, et al. (2021). Methods for oxygenation of continuous cultures of brewer’s yeast, <em>Saccharomyces cerevisiae</em>. <em>Fermentation</em>.</li>
+              <li class="pl-5 -indent-5">Harris, et al. (2020). Sound stimulation can affect <em>Saccharomyces cerevisiae</em> growth and production of volatile metabolites in liquid medium. <em>Metabolites</em>.</li>
+              <li class="pl-5 -indent-5">IMARC Group. (n.d.). <em>Fermented foods market size, share, growth, trends 2022-2027</em>. Retrieved August 18, 2026.</li>
+              <li class="pl-5 -indent-5">Robinson, Annells, Cando-Dumancela, &amp; Breed. (2024). Sonic restoration: Acoustic stimulation enhances plant growth-promoting fungi activity. <em>Biology Letters</em>.</li>
+              <li class="pl-5 -indent-5">Tokuda, et al. (2024). Effect of vibration produced by audible sound on alcohol fermentation of yeast. <em>Journal of Bioscience and Bioengineering</em>.</li>
+              <li class="pl-5 -indent-5">Walker, G. M., &amp; Stewart, G. G. (2016). <em>Saccharomyces cerevisiae</em> in the production of fermented beverages. <em>Beverages</em>, 2(4), 30.</li>
+              <li class="pl-5 -indent-5">Zhang, Z., Wang, W., &amp; Ruan, Z. (2020). Bioethanol production based on <em>Saccharomyces cerevisiae</em>: Opportunities and challenges. <em>Fermentation</em>, 6(4).</li>
+            </ul>
+          </details>
+        </div>
+      </div>
+
+      <!-- 03. Preliminary Methodology (High-Level / Dual-Channel Rig) -->
+      <div class="border-t border-stone-200 dark:border-zinc-800 pt-10 grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-4 space-y-1">
+          <p class="font-mono text-xs text-stone-500 dark:text-zinc-500">03</p>
+          <h3 class="text-lg font-semibold text-stone-900 dark:text-zinc-100">
+            Preliminary Methodology
+          </h3>
+          <p class="font-mono text-[11px] text-amber-700 dark:text-amber-400 pt-1">
+            Status: Protocol in development
+          </p>
+        </div>
+        <div class="md:col-span-8 space-y-6">
+          <p class="text-sm sm:text-base text-stone-700 dark:text-zinc-300 leading-relaxed">
+            Rather than broadcasting sound through air, the experimental setup centers on a <strong>dual-channel signal generator</strong> feeding an audio amplifier and surface contact transducers coupled directly to stationary liquid culture flasks. Running two independent channels allows multiple test frequencies to be evaluated alongside a matched silent control flask fitted with an unpowered transducer.
+          </p>
+
+          <!-- Concise Spec List -->
+          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            <div class="rounded-lg border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4">
+              <dt class="font-mono text-[11px] uppercase tracking-wider text-stone-500 dark:text-zinc-400">Signal &amp; Delivery</dt>
+              <dd class="text-sm text-stone-800 dark:text-zinc-200 mt-1">
+                Dual-channel function generator, stereo power amp, and flask-mounted surface exciters.
+              </dd>
+            </div>
+            <div class="rounded-lg border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4">
+              <dt class="font-mono text-[11px] uppercase tracking-wider text-stone-500 dark:text-zinc-400">Measurement</dt>
+              <dd class="text-sm text-stone-800 dark:text-zinc-200 mt-1">
+                Interval spectrophotometer optical density (OD600) readings to track growth kinetics.
+              </dd>
+            </div>
+            <div class="rounded-lg border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4">
+              <dt class="font-mono text-[11px] uppercase tracking-wider text-stone-500 dark:text-zinc-400">Controls</dt>
+              <dd class="text-sm text-stone-800 dark:text-zinc-200 mt-1">
+                Acoustic isolation pads, thermal checks, and an unpowered control transducer to isolate vibration from heat.
+              </dd>
+            </div>
+            <div class="rounded-lg border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4">
+              <dt class="font-mono text-[11px] uppercase tracking-wider text-stone-500 dark:text-zinc-400">Safety</dt>
+              <dd class="text-sm text-stone-800 dark:text-zinc-200 mt-1">
+                All BSL-1 <em>S. cerevisiae</em> culturing and sterilization conducted in the school biotech lab under ISEF rules.
+              </dd>
+            </div>
+          </dl>
+
+          <p class="text-xs font-mono text-stone-500 dark:text-zinc-400">
+            Note: Final frequency settings, amplitude calibration values, and exact sampling schedules are being verified through preliminary non-biological water tests.
+          </p>
+        </div>
+      </div>
+
+      <!-- 04. Semester 1 Timeline (Clean Table / Log Style) -->
+      <div class="border-t border-stone-200 dark:border-zinc-800 pt-10 grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-4 space-y-1">
+          <p class="font-mono text-xs text-stone-500 dark:text-zinc-500">04</p>
+          <h3 class="text-lg font-semibold text-stone-900 dark:text-zinc-100">
+            Fall 2026 Timeline
+          </h3>
+        </div>
+        <div class="md:col-span-8">
+          <div class="rounded-lg border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 divide-y divide-stone-200 dark:divide-zinc-800">
+            <div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+              <span class="font-mono text-xs text-stone-500 dark:text-zinc-400 sm:w-28 shrink-0">Aug 2026</span>
+              <div class="space-y-1">
+                <p class="text-sm font-semibold text-stone-900 dark:text-zinc-100">Ideation &amp; Organism Selection</p>
+                <p class="text-xs sm:text-sm text-stone-600 dark:text-zinc-400">Selected BSL-1 <em>S. cerevisiae</em>, identified variables, and drafted the core research question.</p>
+              </div>
+            </div>
+
+            <div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+              <span class="font-mono text-xs text-stone-500 dark:text-zinc-400 sm:w-28 shrink-0">Sep 2026</span>
+              <div class="space-y-1">
+                <p class="text-sm font-semibold text-stone-900 dark:text-zinc-100">Research Plan, Introduction &amp; Safety Paperwork</p>
+                <p class="text-xs sm:text-sm text-stone-600 dark:text-zinc-400">Compiled source library, completed the Paper Introduction, and drafted ISEF BSL-1 safety forms.</p>
+              </div>
+            </div>
+
+            <div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+              <span class="font-mono text-xs text-stone-500 dark:text-zinc-400 sm:w-28 shrink-0">Oct 2026</span>
+              <div class="space-y-1">
+                <p class="text-sm font-semibold text-stone-900 dark:text-zinc-100">Literature Review &amp; Hardware Sourcing</p>
+                <p class="text-xs sm:text-sm text-stone-600 dark:text-zinc-400">Synthesized peer-reviewed studies and selected dual-channel signal generator and transducer components.</p>
+              </div>
+            </div>
+
+            <div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+              <span class="font-mono text-xs text-amber-700 dark:text-amber-400 sm:w-28 shrink-0">Nov–Dec 2026</span>
+              <div class="space-y-1">
+                <p class="text-sm font-semibold text-stone-900 dark:text-zinc-100">Calibration, Methodology Draft &amp; Initial Trials</p>
+                <p class="text-xs sm:text-sm text-stone-600 dark:text-zinc-400">Running water-flask thermal/vibration tests, finalizing the Methodology section, and establishing silent control baselines.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="border-t border-stone-200 dark:border-zinc-800 mt-auto">
+    <div class="max-w-5xl mx-auto px-5 sm:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-stone-500 dark:text-zinc-500">
+      <p>Eren Alp Ertem &middot; Innovation Academy</p>
+      <a href="mailto:erenalpertem@aol.com" class="hover:text-stone-900 dark:hover:text-zinc-200 transition-colors">
+        erenalpertem@aol.com
+      </a>
+    </div>
+  </footer>
+
+  <!-- ==================== SUBTLE TOAST ==================== -->
+  <div
+    id="toast"
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-5 right-5 z-50 pointer-events-none opacity-0 translate-y-2 transition-all duration-200 bg-stone-900 dark:bg-zinc-100 text-stone-50 dark:text-zinc-950 px-4 py-2.5 rounded-md shadow-md font-mono text-xs"
+  >
+    Copied to clipboard
+  </div>
+
+  <!-- ==================== INTERACTIVE SCRIPT ==================== -->
+  <script>
+    /**
+     * Switches between the three portfolio views ('home', 'personal', 'process')
+     * and highlights the active navigation link.
+     */
+    function switchTab(tabName) {
+      const validTabs = ['home', 'personal', 'process'];
+      const target = validTabs.includes(tabName) ? tabName : 'home';
+
+      document.querySelectorAll('.tab-panel').forEach((panel) => {
+        panel.classList.add('hidden');
+      });
+      const activePanel = document.getElementById('tab-' + target);
+      if (activePanel) {
+        activePanel.classList.remove('hidden');
+      }
+
+      // Desktop nav active state (clean underline/tint)
+      document.querySelectorAll('.nav-tab').forEach((btn) => {
+        const isActive = btn.getAttribute('data-tab') === target;
+        if (isActive) {
+          btn.className = 'nav-tab px-3.5 py-2 rounded-md text-sm font-semibold bg-stone-200/80 dark:bg-zinc-800 text-stone-950 dark:text-white transition-colors';
+        } else {
+          btn.className = 'nav-tab px-3.5 py-2 rounded-md text-sm font-medium text-stone-600 dark:text-zinc-400 hover:text-stone-950 dark:hover:text-white transition-colors';
+        }
+      });
+
+      // Mobile nav active state
+      document.querySelectorAll('.nav-tab-mobile').forEach((btn) => {
+        const isActive = btn.getAttribute('data-tab') === target;
+        if (isActive) {
+          btn.className = 'nav-tab-mobile w-full text-left px-3 py-2.5 rounded-md text-sm font-semibold bg-stone-200/80 dark:bg-zinc-800 text-stone-950 dark:text-white';
+        } else {
+          btn.className = 'nav-tab-mobile w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-stone-600 dark:text-zinc-400 hover:bg-stone-100 dark:hover:bg-zinc-900';
+        }
+      });
+
+      try {
+        if (window.location.hash !== '#' + target) {
+          history.replaceState(null, '', '#' + target);
+        }
+      } catch (e) {
+        // Safe fallback in sandboxed previews
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /**
+     * Toggles the mobile navigation drawer.
+     */
+    function toggleMobileMenu(forceState) {
+      const menu = document.getElementById('mobile-menu');
+      const btn = document.getElementById('mobile-menu-btn');
+      if (!menu || !btn) return;
+      const shouldOpen = typeof forceState === 'boolean' ? forceState : menu.classList.contains('hidden');
+      menu.classList.toggle('hidden', !shouldOpen);
+      btn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    }
+
+    /**
+     * Toggles light/dark mode and persists preference.
+     */
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      try {
+        localStorage.setItem('eren-portfolio-theme', isDark ? 'dark' : 'light');
+      } catch (e) {
+        // Ignore storage errors
+      }
+    }
+
+    /**
+     * Copies contact email using execCommand for iframe compatibility.
+     */
+    let toastTimeout = null;
+    function copyEmail() {
+      const email = 'erenalpertem@aol.com';
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = email;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Copied: ' + email);
+      } catch (e) {
+        showToast(email);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2200);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '');
+      switchTab(hash || 'home');
+    });
+  </script>
+</body>
+</html>
